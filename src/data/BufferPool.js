@@ -34,9 +34,9 @@ class BufferPool extends BasePool {
     this.push(data)
     return this
   }
-	getBufferSize() {
+  getBufferSize() {
     if (this.length <= 0) return 0
-		return this.reduce((acc, item) => {
+    return this.reduce((acc, item) => {
       if (isNaN(acc)) {
         acc = acc.blob.size
       }
@@ -50,7 +50,7 @@ class BufferPool extends BasePool {
 
   getBufferDuration() {
     if (this.length <= 0) return 0
-		return this.reduce((acc, item) => {
+    return this.arr.reduce((acc, item) => {
       if (isNaN(acc)) {
         acc = acc.end - acc.start
       }
@@ -61,7 +61,7 @@ class BufferPool extends BasePool {
   get bufferDuration() {
     return this.getBufferDuration()
   }
-  
+
 }
 
 export default BufferPool

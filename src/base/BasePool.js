@@ -4,14 +4,27 @@
  * @author: Jarry
  * @file: BasePool.js
  */
-class BasePool extends Array {
+class BasePool {
+
+  arr = []
 
   constructor() {
-    super()
   }
 
   get size() {
-    return this.length
+    return this.arr.length
+  }
+
+  get length() {
+    return this.arr.length
+  }
+
+  set length(newVal) {
+    this.arr.length = newVal
+  }
+
+  push (obj) {
+    this.arr.push(obj)
   }
 
   add(data) {
@@ -25,23 +38,23 @@ class BasePool extends Array {
   }
 
   get(index) {
-    return this[index]
+    return this.arr[index]
   }
 
   getLast() {
-    return this[this.length - 1]
+    return this.arr[this.arr.length - 1]
   }
 
   getBy(func) {
     if (typeof func !== 'function') return
     let result = new(this.constructor)()
-    this.every((model, idx) => {
+    this.arr.every((model, idx) => {
       if (func.call(this, model, idx, this) === true) {
         result.add(model)
       }
       return true
     })
-    return result
+    return result.arr
   }
 
   /**
@@ -57,7 +70,7 @@ class BasePool extends Array {
     let len = this.length - 1
     for (let i = 0; i <= len;) {
       let mid = Math.floor((len + i) / 2)
-      let item = this[mid]
+      let item = this.arr[mid]
       if (match(item)) {
         return mid
       } else if (item.start > time) {
@@ -72,7 +85,7 @@ class BasePool extends Array {
   getByTime(time) {
     let idx = this.indexOfByTime(time)
     if (idx >= 0) {
-      return this[idx]
+      return this.arr[idx]
     }
   }
 
@@ -81,17 +94,17 @@ class BasePool extends Array {
       keys = keys[0]
     }
     return this.getBy(
-      (model) => {
-        let result = false
-        keys.every((key) => {
-          if (Object.prototype.hasOwnProperty.call(model, key)) {
-            result = true
-            return false
-          }
-          return true
-        })
-        return result
-      }
+        (model) => {
+          let result = false
+          keys.every((key) => {
+            if (Object.prototype.hasOwnProperty.call(model, key)) {
+              result = true
+              return false
+            }
+            return true
+          })
+          return result
+        }
     )
   }
 
@@ -100,17 +113,17 @@ class BasePool extends Array {
       values = values[0]
     }
     return this.getBy(
-      (model) => {
-        let result = false
-        model.each((key, value) => {
-          if (values.includes(value)) {
-            result = true
-            // if have any same value, break current each
-            return false
-          }
-        })
-        return result
-      }
+        (model) => {
+          let result = false
+          model.each((key, value) => {
+            if (values.includes(value)) {
+              result = true
+              // if have any same value, break current each
+              return false
+            }
+          })
+          return result
+        }
     )
   }
 
@@ -123,7 +136,7 @@ class BasePool extends Array {
     if (Array.isArray(keys[0])) {
       keys = keys[0]
     }
-    return this.map(function (model) {
+    return this.arr.map(function (model) {
       if (keys.length) {
         return model.get(model, keys)
       } else {
@@ -133,12 +146,12 @@ class BasePool extends Array {
   }
   indexOfBy(func) {
     let i = 0,
-      l = this.length
+        l = this.length
     func = func || function () {
       return false
     }
     while (i < l) {
-      if (func.call(this, this[i], i, this) === true) {
+      if (func.call(this, this.arr[i], i, this) === true) {
         return i
       }
       i++
@@ -159,8 +172,8 @@ class BasePool extends Array {
   /** alias of forEach */
   each(func) {
     if (typeof func !== 'function') return
-    this.forEach(func)
-    return this
+    this.arr.forEach(func)
+    return this.arr
   }
 
   /**
@@ -175,7 +188,7 @@ class BasePool extends Array {
     }
     start = start < 0 ? 0 : start
     end = end || start + 1
-    this.splice(start, end - start)
+    this.arr.splice(start, end - start)
     return this
   }
 
@@ -191,8 +204,8 @@ class BasePool extends Array {
   /** remove item by condition */
   removeBy(func) {
     for (let i = 0, l = this.length; i < l; i++) {
-      if (func.call(this, this[i], i, this) === true) {
-        this.splice(i, 1)
+      if (func.call(this, this.arr[i], i, this) === true) {
+        this.arr.splice(i, 1)
         l--
         i--
       }
@@ -206,16 +219,16 @@ class BasePool extends Array {
   }
 
   toJSON() {
-    let list = Array.from(this)
+    let list = Array.from(this.arr)
     list.forEach(function (model, i) {
       list[i] = (model && typeof model.toJSON === 'function') ?
-        model.toJSON() : model
+          model.toJSON() : model
     })
     return list
   }
 
   toArray() {
-    return Array.from(this)
+    return Array.from(this.arr)
   }
 }
 

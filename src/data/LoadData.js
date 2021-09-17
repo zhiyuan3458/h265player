@@ -2,7 +2,7 @@
  * @copyright: Copyright (C) 2019
  * @file LoadData
  * @desc
- * ts load and data format 
+ * ts load and data format
  * @author Jarry
  */
 
@@ -95,7 +95,7 @@ class LoadData extends BaseClass {
     let buffer
     const idx = this.bufferPool.indexOfByTime(time)
     if (idx > -1) {
-      buffer = this.bufferPool[idx]
+      buffer = this.bufferPool.arr[idx]
       this.events.emit(Events.LoadDataSeek, buffer, time)
     } else {
       this.removeBufferPool(this.bufferPool.length)
@@ -110,7 +110,7 @@ class LoadData extends BaseClass {
     }
     const idx = this.segmentPool.indexOfByTime(time)
     if (idx >= 0) {
-      const segment =  this.segmentPool[idx]
+      const segment =  this.segmentPool.arr[idx]
       this.events.emit(Events.LoaderLoadFile, segment, type, time)
     } else {
       this.logger.error('loadSegmentByTime', 'time over', 'time:', time, 'type:', type)
@@ -147,8 +147,8 @@ class LoadData extends BaseClass {
 
   /**
    * get buffer from bufferPool and the blob will convert to arrayBuffer
-   * @param {number} time 
-   * @param {Function} callback [optional] 
+   * @param {number} time
+   * @param {Function} callback [optional]
    */
   readBufferByNo(no, callback) {
     if (!this.isValidSegmentNo(no)) {
@@ -164,11 +164,11 @@ class LoadData extends BaseClass {
 
   /**
    * get segment from segment by time
-   * @param {number} time 
+   * @param {number} time
    */
   getSegmentByTime(time) {
     const idx = this.segmentPool.indexOfByTime(time)
-    const segment = this.segmentPool[idx]
+    const segment = this.segmentPool.arr[idx]
     return segment
   }
 
@@ -197,8 +197,8 @@ class LoadData extends BaseClass {
 
   addBufferPool(buffer) {
     if (this.bufferPool.length) {
-      if (this.bufferPool[0].no === buffer.no + 1) {
-        this.bufferPool.unshift(buffer)
+      if (this.bufferPool.arr[0].no === buffer.no + 1) {
+        this.bufferPool.arr.unshift(buffer)
         return true
       }
       const last = this.bufferPool.getLast()
@@ -208,8 +208,8 @@ class LoadData extends BaseClass {
       }
       if (this.bufferPool.indexOfByKey('no', buffer.no)) {
         return true
-      }      
-      this.bufferPool.splice(0, this.bufferPool.length)
+      }
+      this.bufferPool.arr.splice(0, this.bufferPool.length)
     }
     this.bufferPool.push(buffer)
   }
@@ -217,9 +217,9 @@ class LoadData extends BaseClass {
   removeBufferPool(idx) {
     // let buffer = this.bufferPool.get(idx)
     // remove all segment before the time
-    this.bufferPool.splice(0, idx + 1)
+    this.bufferPool.arr.splice(0, idx + 1)
   }
-  
+
   removeBufferByNo(no) {
     const idx = this.bufferPool.indexOfByKey('no', no)
     if (idx <= -1) {
