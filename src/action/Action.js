@@ -104,8 +104,11 @@ export default class Action extends BaseClass {
     }
   }
   setCurrentTime(time) {
+    let imagePlayer = this.imagePlayer
     this.player.currentTime = time
-    this.events.emit(Events.PlayerTimeUpdate, time)
+    let startTime = imagePlayer.start
+    let dist = startTime ? (time - startTime) : time;
+    this.events.emit(Events.PlayerTimeUpdate, dist)
   }
 
   pause() {

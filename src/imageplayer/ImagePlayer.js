@@ -15,6 +15,7 @@ export default class ImagePlayer extends BaseClass {
   maxPTS = null
   ready = false
   firstRender = false
+  start = 0
   constructor (options) {
     super(options)
     this.imageData = new ImageData({
@@ -83,11 +84,13 @@ export default class ImagePlayer extends BaseClass {
     let image = this.find(time)
     if (image) {
       if (!this.firstRender) {
+        const firPts = Array.isArray(this.imageData.pool) ? this.imageData.pool[0].pts : 0;
         this.firstRender = true
+        this.start = firPts
         this.events.emit(Events.PlayerLoadedMetaData, image.width, image.height)
       }
       this.screen.drawFrame(image)
-      this.currentTime = image.pts
+      this.currentTime = image.pts;
       this.events.emit(Events.ImagePlayerRenderEnd, time, image.duration)
       return image
     } else {

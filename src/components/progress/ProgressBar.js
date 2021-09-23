@@ -71,7 +71,7 @@ class ProgressBar extends BaseComponent {
       if (isDraging || !time || !duration) {
         return
       }
-      const width = time / 1000 / duration * this.progressBarWidth
+      const width = Math.floor(time) / 1000 / Math.floor(duration) * this.progressBarWidth
       this.setProgressPosition(width)
       this.timer.data.time = timeFormat.formatHHMMSS(time / 1000)
     })
